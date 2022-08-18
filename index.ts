@@ -1,1 +1,5 @@
-console.log('xx');
+const test = async () => {
+  console.log('xx');
+};
+
+test();
