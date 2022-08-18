@@ -17,10 +17,15 @@
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "express": "^4.18.1",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "twilio": "^3.80.1",
+    "uuid": "^8.3.2"
   }
 }
