@@ -25,9 +25,6 @@ const Home: NextPage = () => {
   }, []);
 
   const joinRoom = async () => {
-    // join room'a katılma isteği atılır
-    // katılma isteğinden dönen token bir yerde saklanır o tokenla birlikte odaya girilir
-
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
@@ -37,9 +34,9 @@ const Home: NextPage = () => {
         roomName: 'denemeOdası',
       }),
     });
-    const response = await request.json();
-
-    console.log(response);
+    const { token }: { token: string } = await request.json();
+    // currently we will transfer token to room with query.
+    push(`/room?token=${token}`);
   };
 
   return (
