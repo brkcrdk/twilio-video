@@ -1,3 +1,8 @@
 .container {
   padding: 0 2rem;
 }
+
+.initialCam {
+  width: 300px;
+  height: 300px;
+}
