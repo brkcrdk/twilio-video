@@ -45,7 +45,7 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       {isGettingCam ? (
-        'loading...'
+        <h1>Loading...</h1>
       ) : (
         <video
           className={styles.initialCam}

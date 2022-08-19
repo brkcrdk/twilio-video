@@ -2,6 +2,10 @@
   padding: 0 2rem;
 }
 
+.container > h1 { 
+  color: #fff;
+}
+
 .initialCam {
   width: 300px;
   height: 300px;
