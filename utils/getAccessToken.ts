@@ -1,5 +1,8 @@
 import twilio from 'twilio';
 import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const getAccessToken = async (roomName: string) => {
   // create an access token

@@ -1,4 +1,7 @@
 import twilio from 'twilio';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const twilioClient = twilio(
   process.env.TWILIO_API_KEY_SID,
