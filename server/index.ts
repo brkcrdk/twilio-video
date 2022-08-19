@@ -1,8 +1,11 @@
 import express from 'express';
 import { findOrCreateRoom, getAccessToken } from 'utils';
+import cors from 'cors';
 
 const app = express();
 const port = 4000;
+
+app.use(cors());
 app.use(express.json());
 
 app.post('/join-room', async (req, res) => {
