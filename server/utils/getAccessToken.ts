@@ -5,24 +5,27 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const getAccessToken = async (roomName: string) => {
-  // create an access token
+  // twilio hesap bilgilerimiz ile bir oda oluşturmak içn
+  // token üretiyoruz.
   const AccessToken = twilio.jwt.AccessToken;
   const VideoGrant = AccessToken.VideoGrant;
   const token = new AccessToken(
     String(process.env.TWILIO_ACCOUNT_SID),
     String(process.env.TWILIO_API_KEY_SID),
     String(process.env.TWILIO_API_KEY_SECRET),
-    // generate a random unique identity for this participant
+    // bu talepte bulunan kişinin bilgilerinin bulunacağı bir uniq keyi ifade eder
+    // identitye istediğimizi vereblir. Bu sonradan sistemimizde bulunan kişiye ait
+    // bir token de olabilir.
     { identity: uuidv4() }
   );
-  // // create a video grant for this specific room
+  // bu odaya ulaşım için yetki tanımlamasını yapıyoruz
   const videoGrant = new VideoGrant({
     room: roomName
   });
 
-  // // add the video grant
+  // Bu tokena ait kişiye video yetkisi vermiş oluyoruz
   token.addGrant(videoGrant);
-  // // serialize the token and return it
+  // ardından oluşan bu token'ı jwt formatta return ediyoruz
   return token.toJwt();
 };
 

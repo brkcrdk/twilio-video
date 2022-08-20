@@ -13,16 +13,20 @@ const twilioClient = twilio(
 
 const findOrCreateRoom = async (roomName: string) => {
   try {
+    // Eğer verilen oda ismiyle bir oda oluşturulmuşsa o odaya bağlanmak için izin alır
     await twilioClient.video.rooms(roomName).fetch();
+    // Hata durumunda unkown geliyor ve demo ürettiğim için typescriptte hata
+    // sebeplerini daraltıp ona göre önlem almak gerekiyor. Buna daha sonra odaklanmayı
+    // Doğru buluyorum.
   } catch (error: any) {
-    // the room was not found, so create it
+    // Oda bulunamazsa verilen oda adıyla bir oda oluşturur
     if (error.code === 20404) {
       await twilioClient.video.rooms.create({
         uniqueName: roomName,
         type: 'go'
       });
     } else {
-      // let other errors bubble up
+      // Eğer daha farklı bir hata oluşursa, hata verir
       throw error;
     }
   }

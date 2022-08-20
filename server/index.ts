@@ -9,16 +9,18 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/join-room', async (req, res) => {
-  // return 400 if the request has an empty body or no roomName
+  // Eğer istek sırasında oda ismi gelmezse 400 hatası veriyoruz (Oda bulunamadı!)
   if (!req.body || !req.body.roomName) {
     return res.status(400).send('Must include roomName argument.');
   }
   const roomName = req.body.roomName;
-  // find or create a room with the given roomName
+  // Eğer istekte oda ismi varsa bu isimle oda oluşturuyoruz veya o odaya giriş yapıyoruz.
   await findOrCreateRoom(roomName);
 
-  // generate an Access Token for a participant in this room
+  // Bu odaya giriş için izin alıyoruz (token varsa giriş için izin verilmiştir.)
   const token = await getAccessToken(roomName);
+  // Odaya girişe izin verilen tokenı client tarafına gönderiyoruz ve bu sürecin devamını
+  // client yönetiyor.
   res.send({
     token: token
   });
