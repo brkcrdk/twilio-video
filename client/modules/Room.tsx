@@ -21,11 +21,10 @@ function Room() {
         const participantDiv = document.createElement('div');
         participantDiv.setAttribute('id', room.localParticipant.identity);
         videoContainer?.appendChild(participantDiv);
-        room.localParticipant.tracks.forEach(track => {
-          // const test = new MediaStream(track.track.);
-          // return track.attach();
-          // return console.log(track);
-        });
+
+        // room.localParticipant.videoTracks.forEach(val => {
+        //   // val.track.attach()
+        // });
       }
     };
     connectRoom();
