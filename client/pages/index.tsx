@@ -25,18 +25,19 @@ const Home: NextPage = () => {
   }, []);
 
   const joinRoom = async () => {
+    const generatedRoomName = `oda${Math.random() * 100}`;
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        roomName: 'denemeOdası',
+        roomName: generatedRoomName,
       }),
     });
     const { token }: { token: string } = await request.json();
     // currently we will transfer token to room with query.
-    push(`/room?token=${token}`);
+    push(`/room?token=${token}&roomName=${generatedRoomName}`);
   };
 
   return (
