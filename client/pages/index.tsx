@@ -29,7 +29,7 @@ const Home: NextPage = () => {
   }, []);
 
   const joinRoom = async () => {
-    const roomName = 'yeni deneme odası';
+    const roomName = 'yeni deneme odası-2120';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {

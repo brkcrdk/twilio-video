@@ -23,7 +23,7 @@ const findOrCreateRoom = async (roomName: string) => {
     if (error.code === 20404) {
       await twilioClient.video.rooms.create({
         uniqueName: roomName,
-        type: 'go'
+        type: 'peer-to-peer'
       });
     } else {
       // Eğer daha farklı bir hata oluşursa, hata verir

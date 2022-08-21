@@ -9,6 +9,8 @@ const getAccessToken = async (roomName: string) => {
   // token üretiyoruz.
   const AccessToken = twilio.jwt.AccessToken;
   const VideoGrant = AccessToken.VideoGrant;
+  const identity = uuidv4();
+  console.log('try with this identity', identity);
   const token = new AccessToken(
     String(process.env.TWILIO_ACCOUNT_SID),
     String(process.env.TWILIO_API_KEY_SID),
@@ -16,7 +18,7 @@ const getAccessToken = async (roomName: string) => {
     // bu talepte bulunan kişinin bilgilerinin bulunacağı bir uniq keyi ifade eder
     // identitye istediğimizi vereblir. Bu sonradan sistemimizde bulunan kişiye ait
     // bir token de olabilir.
-    { identity: uuidv4() }
+    { identity }
   );
   // bu odaya ulaşım için yetki tanımlamasını yapıyoruz
   const videoGrant = new VideoGrant({
