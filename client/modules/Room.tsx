@@ -1,35 +1,68 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { connect } from 'twilio-video';
-import Video from 'twilio-video';
+import { connect, LocalParticipant, Room as RoomType } from 'twilio-video';
 
 function Room() {
+  const [room, setRoom] = useState<RoomType | null>(null);
+  const localRef = useRef<HTMLVideoElement>(null);
+  const [localParticipant, setLocalParticipant] =
+    useState<LocalParticipant | null>(null);
   const {
     query: { token, roomName },
   } = useRouter();
 
   useEffect(() => {
     const connectRoom = async () => {
-      if (token) {
-        const room = await connect(String(token), {
+      if (token && room?.state !== 'connected') {
+        const roomResponse = await connect(String(token), {
           name: String(roomName),
           video: true,
           audio: false,
         });
-        const videoContainer = document.getElementById('video-container');
 
-        const participantDiv = document.createElement('div');
-        participantDiv.setAttribute('id', room.localParticipant.identity);
-        videoContainer?.appendChild(participantDiv);
-
-        // room.localParticipant.videoTracks.forEach(val => {
-        //   // val.track.attach()
-        // });
+        setRoom(roomResponse);
+        setLocalParticipant(roomResponse?.localParticipant);
       }
     };
     connectRoom();
   }, []);
 
-  return <div id="video-container">join room with this {token}</div>;
+  useEffect(() => {
+    if (localParticipant) {
+      localParticipant.videoTracks.forEach(val => {
+        if (localRef?.current) {
+          val.track.attach(localRef?.current);
+        }
+      });
+    }
+    // if (room) {
+    //   const videoContainer = document.getElementById('video-container');
+    //   const participantDiv = document.createElement('div');
+    //   participantDiv.setAttribute('id', room.localParticipant.identity);
+    //   videoContainer?.appendChild(participantDiv);
+
+    // }
+  }, [localParticipant]);
+
+  useEffect(() => {
+    return () => {
+      if (room) {
+        // room.localParticipant.videoTracks.forEach(track => track.unpublish());
+        room.disconnect();
+        // room.on('participantDisconnected', (participant: Participant) => {
+        //   participant.removeAllListeners();
+        //   const participantDiv = document.getElementById(participant.identity);
+        //   participantDiv?.remove();
+        // });
+      }
+    };
+  }, [room]);
+
+  return (
+    <div id="video-container">
+      join room with this {token}
+      {localParticipant && <video ref={localRef} autoPlay muted playsInline />}
+    </div>
+  );
 }
 export default Room;
