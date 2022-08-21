@@ -12,32 +12,36 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const getMediaDevices = async () => {
-      const streams = await navigator.mediaDevices.getUserMedia({
-        video: { aspectRatio: 16 / 9, frameRate: 60 },
-      });
-      setMyStream(streams);
-      if (videoRef?.current) {
-        videoRef.current.srcObject = streams;
+      if (navigator?.mediaDevices?.getUserMedia) {
+        const streams = await navigator.mediaDevices.getUserMedia({
+          video: { aspectRatio: 16 / 9, frameRate: 60 },
+        });
+        setMyStream(streams);
+        if (videoRef?.current) {
+          videoRef.current.srcObject = streams;
+        }
+        setIsGettingCam(false);
+      } else {
+        alert('no support of navigator mediadevices ');
       }
-      setIsGettingCam(false);
     };
     getMediaDevices();
   }, []);
 
   const joinRoom = async () => {
-    const generatedRoomName = `oda${Math.random() * 100}`;
+    const roomName = 'yeni deneme odası';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        roomName: generatedRoomName,
+        roomName,
       }),
     });
     const { token }: { token: string } = await request.json();
     // currently we will transfer token to room with query.
-    push(`/room?token=${token}&roomName=${generatedRoomName}`);
+    push(`/room?token=${token}&roomName=${roomName}`);
   };
 
   return (
