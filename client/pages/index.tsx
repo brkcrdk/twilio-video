@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { connect } from 'twilio-video';
 
 import styles from '../styles/Home.module.css';
 
@@ -29,7 +30,7 @@ const Home: NextPage = () => {
   }, []);
 
   const joinRoom = async () => {
-    const roomName = 'yeni deneme odası-2120';
+    const roomName = 'newest-room';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
@@ -41,7 +42,17 @@ const Home: NextPage = () => {
     });
     const { token }: { token: string } = await request.json();
     // currently we will transfer token to room with query.
-    push(`/room?token=${token}&roomName=${roomName}`);
+    // push(`/room?token=${token}&roomName=${roomName}`);
+
+    const room = await connect(String(token), {
+      name: String(roomName),
+      video: true,
+      audio: false,
+    });
+    console.log(
+      'connected to the room, now redirect to room page',
+      room.localParticipant.identity
+    );
   };
 
   return (
