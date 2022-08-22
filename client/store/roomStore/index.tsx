@@ -7,7 +7,7 @@ interface StateProps {
   room: roomType;
 }
 interface RoomAction {
-  type: 'SET_ROOM';
+  type: 'SET_ROOM' | 'CLEAR_ROOM';
   payload?: StateProps;
 }
 
@@ -38,6 +38,9 @@ function reducer(state: StateProps, action: RoomAction) {
       } else {
         return state;
       }
+    }
+    case 'CLEAR_ROOM': {
+      return initialState;
     }
     default: {
       return state;
