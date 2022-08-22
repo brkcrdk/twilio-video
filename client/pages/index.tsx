@@ -28,7 +28,7 @@ const Home: NextPage = () => {
   }, []);
 
   const joinRoom = async () => {
-    const roomName = 'newest-room';
+    const roomName = 'diss-test2';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
