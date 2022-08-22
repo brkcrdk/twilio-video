@@ -1,25 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { connect } from 'twilio-video';
+import { connect, createLocalVideoTrack, isSupported } from 'twilio-video';
+import { useRoom } from 'store';
 
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [isGettingCam, setIsGettingCam] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { push } = useRouter();
+  const { dispatch } = useRoom();
 
   useEffect(() => {
     const getMediaDevices = async () => {
-      if (navigator?.mediaDevices?.getUserMedia) {
-        const streams = await navigator.mediaDevices.getUserMedia({
-          video: { aspectRatio: 16 / 9, frameRate: 60 },
-        });
-        setMyStream(streams);
+      if (isSupported) {
+        const localTrackPreview = await createLocalVideoTrack();
         if (videoRef?.current) {
-          videoRef.current.srcObject = streams;
+          localTrackPreview.attach(videoRef.current);
         }
         setIsGettingCam(false);
       } else {
@@ -41,18 +39,21 @@ const Home: NextPage = () => {
       }),
     });
     const { token }: { token: string } = await request.json();
-    // currently we will transfer token to room with query.
-    // push(`/room?token=${token}&roomName=${roomName}`);
 
     const room = await connect(String(token), {
       name: String(roomName),
       video: true,
       audio: false,
     });
-    console.log(
-      'connected to the room, now redirect to room page',
-      room.localParticipant.identity
-    );
+
+    dispatch({
+      type: 'SET_ROOM',
+      payload: {
+        room,
+      },
+    });
+
+    push('/room');
   };
 
   return (
