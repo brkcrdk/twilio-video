@@ -30,28 +30,18 @@ function Room() {
   }, [room]);
 
   useEffect(() => {
-    if (room) {
-      room.on('participantConnected', participant => {
-        setParticipants(participant);
-        participant.on('trackSubscribed', track => {
-          if (remoteRef?.current && track.kind !== 'data') {
-            track.attach(remoteRef.current);
-          }
-        });
+    const handleTrackSubscribed = (participant: Participant) => {
+      setParticipants(participant);
+      participant.on('trackSubscribed', track => {
+        if (remoteRef?.current && track.kind !== 'data') {
+          track.attach(remoteRef.current);
+        }
       });
-    }
-  }, [room]);
+    };
 
-  useEffect(() => {
     if (room) {
-      room.participants.forEach(participant => {
-        setParticipants(participant);
-        participant.on('trackSubscribed', track => {
-          if (remoteRef?.current && track.kind !== 'data') {
-            track.attach(remoteRef.current);
-          }
-        });
-      });
+      room.on('participantConnected', handleTrackSubscribed);
+      room.participants.forEach(handleTrackSubscribed);
     }
   }, [room]);
 
