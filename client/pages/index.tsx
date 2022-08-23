@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { connect, createLocalVideoTrack, isSupported } from 'twilio-video';
+import { connect, isSupported } from 'twilio-video';
 import { useRoom } from 'store';
 
 import styles from '../styles/Home.module.css';
@@ -11,18 +11,27 @@ const Home: NextPage = () => {
   const [camOn, setCamOn] = useState(true);
   const [audioOn, setAudioOn] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { push } = useRouter();
+  const { push, reload } = useRouter();
   const { dispatch } = useRoom();
 
   useEffect(() => {
     const getMediaDevices = async () => {
       if (isSupported) {
-        const localTrackPreview = await createLocalVideoTrack();
+        /**
+         * NOTE: Eğer twilio-videonun sunduğu createLocalVideo function'ı ile görüntülü oluşturursak
+         * Route değiştiği zaman bile bu kamera açık kalıyordu. Bu durumda createLocalVideo'nun oluşturduğu
+         * görüntüyü unmount sırasında destroy etmek de pek sağlıklı çalışmıyor. Bu nedenle preview esnasında
+         * görüntüyü navite bir şekilde gösteriyoruz.
+         */
+        const localTrackPreview = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
 
         if (videoRef?.current) {
           // Preview kamerasını aç/kapa
           if (camOn) {
-            localTrackPreview.attach(videoRef.current);
+            videoRef.current.srcObject = localTrackPreview;
           } else {
             videoRef.current.srcObject = null;
           }
