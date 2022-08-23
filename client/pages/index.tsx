@@ -21,14 +21,14 @@ const Home: NextPage = () => {
         }
         setIsGettingCam(false);
       } else {
-        alert('no support of navigator mediadevices ');
+        alert('no support of navigator media devices ');
       }
     };
     getMediaDevices();
   }, []);
 
   const joinRoom = async () => {
-    const roomName = 'diss-test2';
+    const roomName = 'dissconnection-test123';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
