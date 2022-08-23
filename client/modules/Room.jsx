@@ -10,7 +10,6 @@ function Room() {
   } = useRoom();
 
   const { push } = useRouter();
-
   const localRef = useRef(null);
   const remoteRef = useRef(null);
 
@@ -58,7 +57,7 @@ function Room() {
 
   useEffect(() => {
     if (room) {
-      room.on('participantDisconnected', participant => {
+      room.on('participantDisconnected', () => {
         setParticipants(null);
       });
     }
