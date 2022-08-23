@@ -1,23 +1,19 @@
-import { useRef, useEffect } from 'react';
-import { LocalParticipant, Participant } from 'twilio-video';
+import { forwardRef } from 'react';
+import { Participant } from 'twilio-video';
 
 interface VideoProps {
-  participant: LocalParticipant | Participant;
+  participant: Participant;
 }
 
-function Video({ participant }: VideoProps) {
-  const localRef = useRef<HTMLVideoElement>(null);
+const Video = forwardRef<HTMLVideoElement, VideoProps>(
+  ({ participant }, ref) => {
+    return (
+      <>
+        <video ref={ref} autoPlay playsInline />
+        <span>{participant.identity}</span>
+      </>
+    );
+  }
+);
 
-  useEffect(() => {
-    if (participant) {
-      participant.videoTracks.forEach(({ track }) => {
-        if (localRef?.current && track) {
-          track.attach(localRef?.current);
-        }
-      });
-    }
-  }, [participant]);
-
-  return <video ref={localRef} />;
-}
 export default Video;

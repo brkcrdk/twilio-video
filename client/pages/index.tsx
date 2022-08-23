@@ -46,7 +46,7 @@ const Home: NextPage = () => {
   }, [camOn]);
 
   const joinRoom = async () => {
-    const roomName = 'dissconnection-test123';
+    const roomName = 'dissconnection-test12323';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
