@@ -5,9 +5,10 @@ type roomType = Room | null;
 
 interface StateProps {
   room: roomType;
+  disconnected?: boolean;
 }
 interface RoomAction {
-  type: 'SET_ROOM' | 'CLEAR_ROOM';
+  type: 'SET_ROOM' | 'CLEAR_ROOM' | 'DISCONNECT';
   payload?: StateProps;
 }
 
@@ -18,6 +19,7 @@ interface IRoomContext {
 
 const initialState = {
   room: null,
+  disconnected: false,
 };
 
 const RoomContext = createContext<IRoomContext>({
@@ -38,6 +40,10 @@ function reducer(state: StateProps, action: RoomAction) {
       } else {
         return state;
       }
+    }
+
+    case 'DISCONNECT': {
+      return { ...initialState, disconnected: true };
     }
     case 'CLEAR_ROOM': {
       return initialState;
