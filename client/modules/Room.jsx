@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { connect, Participant } from 'twilio-video';
 import { useRoom } from 'store';
 import useLeavingRoom from './useLeavingRoom';
 
@@ -59,13 +58,13 @@ function Room() {
     <div id="video-container">
       {room?.localParticipant && (
         <>
-          <video ref={localRef} autoPlay muted playsInline />
+          <video ref={localRef} autoPlay playsInline />
           <span>{room?.localParticipant.identity}</span>
         </>
       )}
       {participants && (
         <>
-          <video ref={remoteRef} autoPlay muted playsInline />
+          <video ref={remoteRef} autoPlay playsInline />
           <span>{participants?.identity}</span>
         </>
       )}

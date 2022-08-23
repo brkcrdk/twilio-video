@@ -19,6 +19,7 @@ const Home: NextPage = () => {
         if (videoRef?.current) {
           localTrackPreview.attach(videoRef.current);
         }
+
         setIsGettingCam(false);
       } else {
         alert('no support of navigator media devices ');
@@ -43,7 +44,7 @@ const Home: NextPage = () => {
     const room = await connect(String(token), {
       name: String(roomName),
       video: true,
-      audio: false,
+      audio: true,
     });
 
     dispatch({
@@ -57,17 +58,18 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div id="container" className={styles.container}>
       {isGettingCam ? (
         <h1>Loading...</h1>
       ) : (
-        <video
-          className={styles.initialCam}
-          ref={videoRef}
-          muted
-          autoPlay
-          playsInline
-        />
+        <>
+          <video
+            className={styles.initialCam}
+            ref={videoRef}
+            autoPlay
+            playsInline
+          />
+        </>
       )}
       <button onClick={joinRoom}>Join To Room</button>
     </div>
