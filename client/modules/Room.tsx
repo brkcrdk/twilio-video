@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/router';
 import { Participant, createLocalVideoTrack } from 'twilio-video';
 
 import { useRoom } from 'store';
@@ -11,9 +10,9 @@ import styles from 'styles/Home.module.css';
 function Room() {
   const {
     state: { room },
+    dispatch,
   } = useRoom();
 
-  const { push } = useRouter();
   const localRef = useRef(null);
   const remoteRef = useRef(null);
 
@@ -89,8 +88,12 @@ function Room() {
       </div>
       <button
         onClick={() => {
+          // disconnect olunduğu zaman kamera da stop edilmeli
+          // ilk kamera durdurulup ondan sonra disconnect edilmeli, belki??
           room?.disconnect();
-          push('/');
+          dispatch({
+            type: 'DISCONNECT',
+          });
         }}
       >
         Ayrıl

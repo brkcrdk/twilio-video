@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { connect, isSupported } from 'twilio-video';
 import { useRoom } from 'store';
+import { Room, Disconnected } from 'modules';
 
 import { videoContraints } from 'videoConstants';
 import styles from '../styles/Home.module.css';
@@ -10,10 +10,12 @@ import styles from '../styles/Home.module.css';
 const Home: NextPage = () => {
   const [isGettingCam, setIsGettingCam] = useState(true);
   const [camOn, setCamOn] = useState(true);
-  const [audioOn, setAudioOn] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { push, reload } = useRouter();
-  const { dispatch } = useRoom();
+  // const [audioOn, setAudioOn] = useState(true);
+  const {
+    state: { room, disconnected },
+    dispatch,
+  } = useRoom();
 
   useEffect(() => {
     const getMediaDevices = async () => {
@@ -71,33 +73,37 @@ const Home: NextPage = () => {
         room,
       },
     });
-
-    push('/room');
   };
 
   return (
     <div id="container" className={styles.container}>
-      {isGettingCam ? (
-        <h1>Loading...</h1>
-      ) : (
+      {room && <Room />}
+      {disconnected && <Disconnected />}
+      {!room && !disconnected && (
         <>
-          <video
-            className={styles.initialCam}
-            ref={videoRef}
-            autoPlay
-            playsInline
-          />
+          {isGettingCam ? (
+            <h1>Loading...</h1>
+          ) : (
+            <>
+              <video
+                className={styles.initialCam}
+                ref={videoRef}
+                autoPlay
+                playsInline
+              />
+            </>
+          )}
+          <>
+            <label>Kamera açık mı?</label>
+            <input
+              type="checkbox"
+              checked={camOn}
+              onChange={() => setCamOn(p => !p)}
+            />
+          </>
+          <button onClick={joinRoom}>Join To Room</button>
         </>
       )}
-      <>
-        <label>Kamera açık mı?</label>
-        <input
-          type="checkbox"
-          checked={camOn}
-          onChange={() => setCamOn(p => !p)}
-        />
-      </>
-      <button onClick={joinRoom}>Join To Room</button>
     </div>
   );
 };
