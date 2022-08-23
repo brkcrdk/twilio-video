@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useRoom } from 'store';
 import useLeavingRoom from './useLeavingRoom';
+import { Participant } from 'twilio-video';
 
 function Room() {
   const {
@@ -14,7 +15,7 @@ function Room() {
 
   useLeavingRoom(() => setParticipants(null));
 
-  const [participants, setParticipants] = useState(null);
+  const [participants, setParticipants] = useState<Participant | null>(null);
 
   useEffect(() => {
     if (room?.localParticipant) {
@@ -33,7 +34,7 @@ function Room() {
       room.on('participantConnected', participant => {
         setParticipants(participant);
         participant.on('trackSubscribed', track => {
-          if (remoteRef?.current) {
+          if (remoteRef?.current && track.kind !== 'data') {
             track.attach(remoteRef.current);
           }
         });
@@ -46,7 +47,7 @@ function Room() {
       room.participants.forEach(participant => {
         setParticipants(participant);
         participant.on('trackSubscribed', track => {
-          if (remoteRef?.current) {
+          if (remoteRef?.current && track.kind !== 'data') {
             track.attach(remoteRef.current);
           }
         });
