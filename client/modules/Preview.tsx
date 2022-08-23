@@ -1,20 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
-import type { NextPage } from 'next';
+import { useEffect, useRef, useState } from 'react';
 import { connect, isSupported } from 'twilio-video';
+
 import { useRoom } from 'store';
-import { Room, Disconnected, Preview } from 'modules';
+import styles from 'styles/Home.module.css';
 
-import { videoContraints } from 'videoConstants';
-import styles from '../styles/Home.module.css';
+interface PreviewProps {
+  joinRoom: () => void;
+}
 
-const Home: NextPage = () => {
+function Preview({ joinRoom }: PreviewProps) {
   const [isGettingCam, setIsGettingCam] = useState(true);
   const [camOn, setCamOn] = useState(true);
+
   const videoRef = useRef<HTMLVideoElement>(null);
-  // const [audioOn, setAudioOn] = useState(true);
+
   const {
     state: { room, disconnected },
-    dispatch,
   } = useRoom();
 
   useEffect(() => {
@@ -48,40 +49,33 @@ const Home: NextPage = () => {
     getMediaDevices();
   }, [camOn]);
 
-  const joinRoom = async () => {
-    const roomName = 'dissconnection-test12323';
-    const request = await fetch('http://localhost:4000/join-room', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        roomName,
-      }),
-    });
-    const { token }: { token: string } = await request.json();
-
-    const room = await connect(String(token), {
-      name: String(roomName),
-      video: videoContraints,
-      audio: false,
-    });
-
-    dispatch({
-      type: 'SET_ROOM',
-      payload: {
-        room,
-      },
-    });
-  };
-
   return (
-    <div id="container" className={styles.container}>
-      {room && <Room />}
-      {disconnected && <Disconnected />}
-      {!room && !disconnected && <Preview joinRoom={joinRoom} />}
-    </div>
+    !room &&
+    !disconnected && (
+      <>
+        {isGettingCam ? (
+          <h1>Loading...</h1>
+        ) : (
+          <>
+            <video
+              className={styles.initialCam}
+              ref={videoRef}
+              autoPlay
+              playsInline
+            />
+          </>
+        )}
+        <>
+          <label>Kamera açık mı?</label>
+          <input
+            type="checkbox"
+            checked={camOn}
+            onChange={() => setCamOn(p => !p)}
+          />
+        </>
+        <button onClick={joinRoom}>Join To Room</button>
+      </>
+    )
   );
-};
-
-export default Home;
+}
+export default Preview;
