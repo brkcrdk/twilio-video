@@ -21,11 +21,11 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(
           autoPlay
           playsInline
         />
-        {/* {!hasVideo && (
-        )} */}
-        <div style={{ height: '100%' }}>
-          {isLoading ? 'Kamera Açılıyor' : 'Kamera yok'}
-        </div>
+        {!hasVideo && (
+          <div className={styles.avatarContainer}>
+            {isLoading ? 'Kamera Açılıyor' : 'Kamera yok'}
+          </div>
+        )}
         {/* <span>{participant.identity}</span> */}
       </div>
     );
