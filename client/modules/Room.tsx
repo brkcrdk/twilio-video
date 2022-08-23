@@ -3,8 +3,11 @@ import { useRouter } from 'next/router';
 import { Participant, createLocalVideoTrack } from 'twilio-video';
 
 import { useRoom } from 'store';
+import { videoContraints } from 'videoConstants';
 import useLeavingRoom from './useLeavingRoom';
 import Video from './Video';
+import styles from 'styles/Home.module.css';
+
 function Room() {
   const {
     state: { room },
@@ -16,6 +19,7 @@ function Room() {
 
   const [displayVideo, setDisplayVideo] = useState(false);
   const [remoteUser, setRemoteUser] = useState<Participant | null>(null);
+  const [isCamOpening, setIsCamOpening] = useState(false);
 
   useLeavingRoom(() => setRemoteUser(null));
 
@@ -56,7 +60,8 @@ function Room() {
         setDisplayVideo(false);
       });
     } else {
-      const localTrack = await createLocalVideoTrack();
+      setIsCamOpening(true);
+      const localTrack = await createLocalVideoTrack(videoContraints);
       room?.localParticipant.publishTrack(localTrack);
       room?.localParticipant.videoTracks.forEach(publication => {
         publication.track.enable();
@@ -65,16 +70,23 @@ function Room() {
         localTrack.attach(localRef.current);
       }
       setDisplayVideo(true);
+      setIsCamOpening(false);
     }
   };
 
   return (
-    <div id="video-container">
-      {room?.localParticipant && (
-        <Video ref={localRef} participant={room?.localParticipant} />
-      )}
-      {remoteUser && <Video ref={remoteRef} participant={remoteUser} />}
-
+    <div className={styles.roomContainer}>
+      <div className={styles.videosContainer}>
+        {room?.localParticipant && (
+          <Video
+            ref={localRef}
+            participant={room?.localParticipant}
+            hasVideo={displayVideo}
+            isLoading={isCamOpening}
+          />
+        )}
+        {remoteUser && <Video ref={remoteRef} participant={remoteUser} />}
+      </div>
       <button
         onClick={() => {
           room?.disconnect();
