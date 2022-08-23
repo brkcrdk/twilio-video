@@ -8,6 +8,8 @@ import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const [isGettingCam, setIsGettingCam] = useState(true);
+  const [camOn, setCamOn] = useState(true);
+  const [audioOn, setAudioOn] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { push } = useRouter();
   const { dispatch } = useRoom();
@@ -16,8 +18,14 @@ const Home: NextPage = () => {
     const getMediaDevices = async () => {
       if (isSupported) {
         const localTrackPreview = await createLocalVideoTrack();
+
         if (videoRef?.current) {
-          localTrackPreview.attach(videoRef.current);
+          // Preview kamerasını aç/kapa
+          if (camOn) {
+            localTrackPreview.attach(videoRef.current);
+          } else {
+            videoRef.current.srcObject = null;
+          }
         }
 
         setIsGettingCam(false);
@@ -26,7 +34,7 @@ const Home: NextPage = () => {
       }
     };
     getMediaDevices();
-  }, []);
+  }, [camOn]);
 
   const joinRoom = async () => {
     const roomName = 'dissconnection-test123';
@@ -43,7 +51,7 @@ const Home: NextPage = () => {
 
     const room = await connect(String(token), {
       name: String(roomName),
-      video: true,
+      video: camOn,
       audio: false,
     });
 
@@ -71,6 +79,14 @@ const Home: NextPage = () => {
           />
         </>
       )}
+      <>
+        <label>Kamera açık mı?</label>
+        <input
+          type="checkbox"
+          checked={camOn}
+          onChange={() => setCamOn(p => !p)}
+        />
+      </>
       <button onClick={joinRoom}>Join To Room</button>
     </div>
   );

@@ -13,6 +13,8 @@ function Room() {
   const localRef = useRef(null);
   const remoteRef = useRef(null);
 
+  const [displayVideo, setDisplayVideo] = useState(false);
+
   useLeavingRoom(() => setParticipants(null));
 
   const [participants, setParticipants] = useState<Participant | null>(null);
@@ -22,6 +24,7 @@ function Room() {
       const { localParticipant } = room;
 
       localParticipant.videoTracks.forEach(val => {
+        setDisplayVideo(val.isTrackEnabled);
         if (localRef?.current) {
           val.track.attach(localRef?.current);
         }
@@ -45,6 +48,20 @@ function Room() {
     }
   }, [room]);
 
+  const toggleCam = async () => {
+    if (displayVideo) {
+      room?.localParticipant.videoTracks.forEach(publication => {
+        setDisplayVideo(false);
+        publication.track.disable();
+      });
+    } else {
+      room?.localParticipant.videoTracks.forEach(publication => {
+        setDisplayVideo(true);
+        publication.track.enable();
+      });
+    }
+  };
+
   return (
     <div id="video-container">
       {room?.localParticipant && (
@@ -66,6 +83,9 @@ function Room() {
         }}
       >
         Ayrıl
+      </button>
+      <button onClick={toggleCam}>
+        Kamera Aç/Kapa {JSON.stringify(displayVideo)}
       </button>
     </div>
   );
