@@ -9,10 +9,12 @@ function Room() {
     state: { room },
   } = useRoom();
 
+  const { push } = useRouter();
+
   const localRef = useRef(null);
   const remoteRef = useRef(null);
 
-  useLeaveWarning(room?.disconnect);
+  useLeaveWarning(() => room?.disconnect());
 
   const [participants, setParticipants] = useState(null);
 
@@ -57,9 +59,7 @@ function Room() {
   useEffect(() => {
     if (room) {
       room.on('participantDisconnected', participant => {
-        console.log(
-          `participant disconnected from room ${participant.identity}`
-        );
+        setParticipants(null);
       });
     }
   }, [room]);
@@ -77,14 +77,26 @@ function Room() {
 
   return (
     <div id="video-container">
-      <>
-        <video ref={localRef} autoPlay muted playsInline />
-        <span>{room?.localParticipant.identity}</span>
-      </>
-      <>
-        <video ref={remoteRef} autoPlay muted playsInline />
-        <span>{participants?.identity}</span>
-      </>
+      {room?.localParticipant && (
+        <>
+          <video ref={localRef} autoPlay muted playsInline />
+          <span>{room?.localParticipant.identity}</span>
+        </>
+      )}
+      {participants && (
+        <>
+          <video ref={remoteRef} autoPlay muted playsInline />
+          <span>{participants?.identity}</span>
+        </>
+      )}
+      <button
+        onClick={() => {
+          room?.disconnect();
+          push('/');
+        }}
+      >
+        Ayrıl
+      </button>
     </div>
   );
 }
