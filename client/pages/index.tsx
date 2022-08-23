@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { connect, isSupported } from 'twilio-video';
 import { useRoom } from 'store';
 
+import { videoContraints } from 'videoConstants';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
@@ -60,7 +61,7 @@ const Home: NextPage = () => {
 
     const room = await connect(String(token), {
       name: String(roomName),
-      video: camOn,
+      video: videoContraints,
       audio: false,
     });
 
