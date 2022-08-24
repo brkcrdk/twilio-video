@@ -94,6 +94,7 @@ function Room() {
             participant={room?.localParticipant}
             hasVideo={displayVideo}
             isLoading={isCamOpening}
+            isRemote
           />
         )}
         {remoteUser && (
