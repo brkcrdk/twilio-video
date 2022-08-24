@@ -9,6 +9,8 @@ import styles from 'styles/Home.module.css';
 
 const Home: NextPage = () => {
   const [camOn, setCamOn] = useState(true);
+  const [audioOn, setAudioOn] = useState(true);
+
   const [connecting, setConnecting] = useState(false);
   const {
     state: { room, disconnected },
@@ -51,9 +53,11 @@ const Home: NextPage = () => {
       {!room && !disconnected && (
         <Preview
           isConnecting={connecting}
+          joinRoom={joinRoom}
           onCamStatusChange={() => setCamOn(p => !p)}
           camStatus={camOn}
-          joinRoom={joinRoom}
+          audioStatus={audioOn}
+          onAudioStatusChange={() => setAudioOn(p => !p)}
         />
       )}
     </div>

@@ -38,7 +38,7 @@ function Room() {
             participant={room?.localParticipant}
             hasVideo={displayVideo}
             isLoading={isCamOpening}
-            isRemote
+            isLocal
           />
         )}
         {remoteUser && (
@@ -69,9 +69,7 @@ function Room() {
       >
         Ayrıl
       </button>
-      <button onClick={toggleCam}>
-        Kamera Aç/Kapa {JSON.stringify(displayVideo)}
-      </button>
+      <button onClick={toggleCam}>Kamera Aç/Kapa</button>
     </div>
   );
 }

@@ -6,16 +6,13 @@ interface VideoProps {
   participant: Participant;
   hasVideo?: boolean;
   isLoading?: boolean;
-  isRemote?: boolean;
+  isLocal?: boolean;
 }
 
 const Video = forwardRef<HTMLVideoElement, VideoProps>(
-  ({ participant, hasVideo = true, isLoading, isRemote }, ref) => {
+  ({ participant, hasVideo = true, isLoading, isLocal }, ref) => {
     return (
-      <div
-        className={styles.videoContainer}
-        style={{ borderColor: isRemote ? 'red' : 'blue' }}
-      >
+      <div className={styles.videoContainer}>
         <video
           className={styles.videoElement}
           style={{
@@ -32,6 +29,7 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(
         )}
         <div className={styles.videoInfo}>
           <span>Participant ID:{participant.identity}</span>
+          <span>Statu: {isLocal ? 'Local' : 'Remote'}</span>
           <span>Kamera:{hasVideo ? 'Açık' : 'Kapalı'}</span>
         </div>
       </div>
