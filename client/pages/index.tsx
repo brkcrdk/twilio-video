@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import type { NextPage } from 'next';
-import { connect, isSupported } from 'twilio-video';
+import { connect } from 'twilio-video';
 import { useRoom } from 'store';
 import { Room, Disconnected, Preview } from 'modules';
 
@@ -8,47 +8,15 @@ import { videoContraints } from 'videoConstants';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const [isGettingCam, setIsGettingCam] = useState(true);
   const [camOn, setCamOn] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  // const [audioOn, setAudioOn] = useState(true);
+  const [connecting, setConnecting] = useState(false);
   const {
     state: { room, disconnected },
     dispatch,
   } = useRoom();
 
-  useEffect(() => {
-    const getMediaDevices = async () => {
-      if (isSupported) {
-        /**
-         * NOTE: Eğer twilio-videonun sunduğu createLocalVideo function'ı ile görüntülü oluşturursak
-         * Route değiştiği zaman bile bu kamera açık kalıyordu. Bu durumda createLocalVideo'nun oluşturduğu
-         * görüntüyü unmount sırasında destroy etmek de pek sağlıklı çalışmıyor. Bu nedenle preview esnasında
-         * görüntüyü navite bir şekilde gösteriyoruz.
-         */
-        const localTrackPreview = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-
-        if (videoRef?.current) {
-          // Preview kamerasını aç/kapa
-          if (camOn) {
-            videoRef.current.srcObject = localTrackPreview;
-          } else {
-            videoRef.current.srcObject = null;
-          }
-        }
-
-        setIsGettingCam(false);
-      } else {
-        alert('no support of navigator media devices ');
-      }
-    };
-    getMediaDevices();
-  }, [camOn]);
-
   const joinRoom = async () => {
+    setConnecting(true);
     const roomName = 'dissconnection-test12323';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
@@ -73,13 +41,21 @@ const Home: NextPage = () => {
         room,
       },
     });
+    setConnecting(false);
   };
 
   return (
     <div id="container" className={styles.container}>
       {room && <Room />}
       {disconnected && <Disconnected />}
-      {!room && !disconnected && <Preview joinRoom={joinRoom} />}
+      {!room && !disconnected && (
+        <Preview
+          isConnecting={connecting}
+          onCamStatusChange={() => setCamOn(p => !p)}
+          camStatus={camOn}
+          joinRoom={joinRoom}
+        />
+      )}
     </div>
   );
 };
