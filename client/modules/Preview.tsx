@@ -1,22 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
-import { connect, isSupported } from 'twilio-video';
+import { isSupported } from 'twilio-video';
 
-import { useRoom } from 'store';
 import styles from 'styles/Home.module.css';
 
 interface PreviewProps {
   joinRoom: () => void;
+  isConnecting: boolean;
+  onCamStatusChange: () => void;
+  camStatus: boolean;
 }
 
-function Preview({ joinRoom }: PreviewProps) {
+function Preview({
+  joinRoom,
+  isConnecting,
+  onCamStatusChange,
+  camStatus,
+}: PreviewProps) {
   const [isGettingCam, setIsGettingCam] = useState(true);
-  const [camOn, setCamOn] = useState(true);
+  // const [camOn, setCamOn] = useState(true);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const {
-    state: { room, disconnected },
-  } = useRoom();
 
   useEffect(() => {
     const getMediaDevices = async () => {
@@ -34,7 +37,7 @@ function Preview({ joinRoom }: PreviewProps) {
 
         if (videoRef?.current) {
           // Preview kamerasını aç/kapa
-          if (camOn) {
+          if (camStatus) {
             videoRef.current.srcObject = localTrackPreview;
           } else {
             videoRef.current.srcObject = null;
@@ -47,35 +50,34 @@ function Preview({ joinRoom }: PreviewProps) {
       }
     };
     getMediaDevices();
-  }, [camOn]);
+  }, [camStatus]);
 
   return (
-    !room &&
-    !disconnected && (
-      <>
-        {isGettingCam ? (
-          <h1>Loading...</h1>
-        ) : (
-          <>
-            <video
-              className={styles.initialCam}
-              ref={videoRef}
-              autoPlay
-              playsInline
-            />
-          </>
-        )}
+    <>
+      {isGettingCam ? (
+        <h1>Loading...</h1>
+      ) : (
         <>
-          <label>Kamera açık mı?</label>
-          <input
-            type="checkbox"
-            checked={camOn}
-            onChange={() => setCamOn(p => !p)}
+          <video
+            className={styles.initialCam}
+            ref={videoRef}
+            autoPlay
+            playsInline
           />
         </>
-        <button onClick={joinRoom}>Join To Room</button>
+      )}
+      <>
+        <label>Kamera açık mı?</label>
+        <input
+          type="checkbox"
+          checked={camStatus}
+          onChange={onCamStatusChange}
+        />
       </>
-    )
+      <button onClick={joinRoom} disabled={isConnecting}>
+        {isConnecting ? 'Joining' : 'Join to room'}
+      </button>
+    </>
   );
 }
 export default Preview;
