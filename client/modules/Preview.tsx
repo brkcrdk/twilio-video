@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { isSupported } from 'twilio-video';
-
+import { videoContraints } from 'videoConstants';
 import styles from 'styles/Home.module.css';
 
 interface PreviewProps {
   joinRoom: () => void;
   isConnecting: boolean;
-  onCamStatusChange: () => void;
   camStatus: boolean;
+  onCamStatusChange: () => void;
+  audioStatus: boolean;
+  onAudioStatusChange: () => void;
 }
 
 function Preview({
@@ -15,6 +17,8 @@ function Preview({
   isConnecting,
   onCamStatusChange,
   camStatus,
+  onAudioStatusChange,
+  audioStatus,
 }: PreviewProps) {
   const [isGettingCam, setIsGettingCam] = useState(true);
   // const [camOn, setCamOn] = useState(true);
@@ -31,7 +35,7 @@ function Preview({
          * görüntüyü navite bir şekilde gösteriyoruz.
          */
         const localTrackPreview = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: videoContraints,
           audio: false,
         });
 
@@ -53,31 +57,41 @@ function Preview({
   }, [camStatus]);
 
   return (
-    <>
+    <div className={styles.previewContainer}>
       {isGettingCam ? (
         <h1>Loading...</h1>
       ) : (
-        <>
-          <video
-            className={styles.initialCam}
-            ref={videoRef}
-            autoPlay
-            playsInline
-          />
-        </>
-      )}
-      <>
-        <label>Kamera açık mı?</label>
-        <input
-          type="checkbox"
-          checked={camStatus}
-          onChange={onCamStatusChange}
+        <video
+          className={styles.initialCam}
+          ref={videoRef}
+          autoPlay
+          playsInline
         />
-      </>
-      <button onClick={joinRoom} disabled={isConnecting}>
-        {isConnecting ? 'Joining' : 'Join to room'}
-      </button>
-    </>
+      )}
+      <div className={styles.previewControllers}>
+        <div>
+          <label>Kamera açık mı katılacaksın?</label>
+          <input
+            type="checkbox"
+            id="camstatus-checkbox"
+            checked={camStatus}
+            onChange={onCamStatusChange}
+          />
+        </div>
+        <div>
+          <label>Mikrofon açık mı katılacaksın?</label>
+          <input
+            type="checkbox"
+            id="audiostatus-checkbox"
+            checked={audioStatus}
+            onChange={onAudioStatusChange}
+          />
+        </div>
+        <button onClick={joinRoom} disabled={isConnecting}>
+          {isConnecting ? 'Joining' : 'Join to room'}
+        </button>
+      </div>
+    </div>
   );
 }
 export default Preview;
