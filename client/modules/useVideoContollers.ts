@@ -32,39 +32,25 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
   }, [room, localRef]);
 
   useEffect(() => {
-    const handleUnpublish = () => setRemoteVideo(false);
-    const handlePublish = () => setRemoteVideo(true);
-
     /**
      * `participantConnected` ile yeni katılan kişilerin eventlerini dinlemeye başlıyoruz
      * `room?.participants` ile daha önceden katılmış olan kişilerin eventlerini dinlemeye başlıyoruz
      *  bu nedenle iki grup tarafı için ayrı event tanımlamaları yapmak gerekiyor.
      */
-    room?.on('participantConnected', participant => {
+    const handleRemoteVideo = (participant: Participant) => {
       participant.on('trackPublished', track => {
         if (track.kind === 'video') {
-          handlePublish();
+          setRemoteVideo(true);
         }
       });
       participant.on('trackUnpublished', track => {
         if (track.kind === 'video') {
-          handleUnpublish();
+          setRemoteVideo(false);
         }
       });
-    });
-
-    room?.participants.forEach(participant => {
-      participant.on('trackPublished', track => {
-        if (track.kind === 'video') {
-          handlePublish();
-        }
-      });
-      participant.on('trackUnpublished', track => {
-        if (track.kind === 'video') {
-          handleUnpublish();
-        }
-      });
-    });
+    };
+    room?.on('participantConnected', handleRemoteVideo);
+    room?.participants.forEach(handleRemoteVideo);
   }, [room]);
 
   useEffect(() => {
