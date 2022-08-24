@@ -56,23 +56,11 @@ function Room() {
   useEffect(() => {
     room?.participants.forEach(participant => {
       participant.videoTracks.forEach(publication => {
-        publication.on('unsubscribed', () => {
-          console.log('karşı kullanıcı kamera kapadı');
-        });
+        publication.on('unsubscribed', () => setRemoteVideo(false));
+        publication.on('subscribed', () => setRemoteVideo(true));
       });
     });
   }, [room]);
-
-  // useEffect(() => {
-  //   room?.participants.forEach(participant => {
-  //     participant.tracks.forEach(publication => {
-  //       publication.on('subscribed', () => {
-  //         console.log('karşı kullanıcı kamera açtı');
-  //         setRemoteVideo(true);
-  //       });
-  //     });
-  //   });
-  // }, [room]);
 
   const toggleCam = async () => {
     if (displayVideo) {
