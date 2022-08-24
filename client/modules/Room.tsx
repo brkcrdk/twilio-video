@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Participant, createLocalVideoTrack } from 'twilio-video';
+import { Participant, createLocalVideoTrack, RemoteTrack } from 'twilio-video';
 
 import { useRoom } from 'store';
 import { videoContraints } from 'videoConstants';
@@ -17,6 +17,7 @@ function Room() {
   const remoteRef = useRef(null);
 
   const [displayVideo, setDisplayVideo] = useState(false);
+  const [remoteVideo, setRemoteVideo] = useState(false);
   const [remoteUser, setRemoteUser] = useState<Participant | null>(null);
   const [isCamOpening, setIsCamOpening] = useState(false);
 
@@ -37,7 +38,9 @@ function Room() {
   useEffect(() => {
     const handleTrackSubscribed = (participant: Participant) => {
       setRemoteUser(participant);
+
       participant.on('trackSubscribed', track => {
+        setRemoteVideo(track.isEnabled);
         if (remoteRef?.current && track.kind !== 'data') {
           track.attach(remoteRef.current);
         }
@@ -49,6 +52,27 @@ function Room() {
       room.participants.forEach(handleTrackSubscribed);
     }
   }, [room]);
+
+  useEffect(() => {
+    room?.participants.forEach(participant => {
+      participant.videoTracks.forEach(publication => {
+        publication.on('unsubscribed', () => {
+          console.log('karşı kullanıcı kamera kapadı');
+        });
+      });
+    });
+  }, [room]);
+
+  // useEffect(() => {
+  //   room?.participants.forEach(participant => {
+  //     participant.tracks.forEach(publication => {
+  //       publication.on('subscribed', () => {
+  //         console.log('karşı kullanıcı kamera açtı');
+  //         setRemoteVideo(true);
+  //       });
+  //     });
+  //   });
+  // }, [room]);
 
   const toggleCam = async () => {
     if (displayVideo) {
@@ -84,7 +108,13 @@ function Room() {
             isLoading={isCamOpening}
           />
         )}
-        {remoteUser && <Video ref={remoteRef} participant={remoteUser} />}
+        {remoteUser && (
+          <Video
+            ref={remoteRef}
+            participant={remoteUser}
+            hasVideo={remoteVideo}
+          />
+        )}
       </div>
       <button
         onClick={() => {
@@ -100,8 +130,10 @@ function Room() {
       </button>
       <button onClick={toggleCam}>
         Kamera Aç/Kapa {JSON.stringify(displayVideo)}
+        remote Video {JSON.stringify(remoteVideo)}
       </button>
     </div>
   );
 }
+
 export default Room;
