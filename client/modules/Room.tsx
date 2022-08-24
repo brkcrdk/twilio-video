@@ -20,9 +20,9 @@ function Room() {
     toggleCam,
     clearRemoteUser,
     remoteUser,
-    displayVideo,
+    isLocalVideoOn,
     isCamOpening,
-    remoteVideo,
+    isRemoteVideOn,
   } = useVideoControllers({
     localRef,
     remoteRef,
@@ -40,7 +40,7 @@ function Room() {
           <Video
             ref={localRef}
             participant={room?.localParticipant}
-            hasVideo={displayVideo}
+            hasVideo={isLocalVideoOn}
             hasAudio={isLocalAudioOn}
             isLoading={isCamOpening}
             isLocal
@@ -50,7 +50,7 @@ function Room() {
           <Video
             ref={remoteRef}
             participant={remoteUser}
-            hasVideo={remoteVideo}
+            hasVideo={isRemoteVideOn}
             hasAudio={isRemoteAudioOn}
           />
         )}

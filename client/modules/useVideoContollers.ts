@@ -14,8 +14,8 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
     state: { room },
   } = useRoom();
 
-  const [displayVideo, setDisplayVideo] = useState(false);
-  const [remoteVideo, setRemoteVideo] = useState(false);
+  const [isLocalVideoOn, setIsLocalVideoOn] = useState(false);
+  const [isRemoteVideOn, setIsRemoteVideoOn] = useState(false);
   const [remoteUser, setRemoteUser] = useState<Participant | null>(null);
   const [isCamOpening, setIsCamOpening] = useState(false);
 
@@ -23,7 +23,7 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
     if (room?.localParticipant) {
       const { localParticipant } = room;
       localParticipant.videoTracks.forEach(track => {
-        setDisplayVideo(track.isTrackEnabled);
+        setIsLocalVideoOn(track.isTrackEnabled);
         if (localRef?.current) {
           track.track.attach(localRef?.current);
         }
@@ -40,12 +40,12 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
     const handleRemoteVideo = (participant: Participant) => {
       participant.on('trackPublished', track => {
         if (track.kind === 'video') {
-          setRemoteVideo(true);
+          setIsRemoteVideoOn(true);
         }
       });
       participant.on('trackUnpublished', track => {
         if (track.kind === 'video') {
-          setRemoteVideo(false);
+          setIsRemoteVideoOn(false);
         }
       });
     };
@@ -58,7 +58,7 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
       setRemoteUser(participant);
 
       participant.on('trackSubscribed', track => {
-        setRemoteVideo(track.isEnabled);
+        setIsRemoteVideoOn(track.isEnabled);
         if (remoteRef?.current && track.kind !== 'data') {
           track.attach(remoteRef.current);
         }
@@ -72,12 +72,12 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
   }, [room, remoteRef]);
 
   const toggleCam = async () => {
-    if (displayVideo) {
+    if (isLocalVideoOn) {
       room?.localParticipant.videoTracks.forEach(publication => {
         publication.unpublish();
         publication.track.disable();
         publication.track.stop();
-        setDisplayVideo(false);
+        setIsLocalVideoOn(false);
       });
     } else {
       setIsCamOpening(true);
@@ -89,7 +89,7 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
       if (localRef.current) {
         localTrack.attach(localRef.current);
       }
-      setDisplayVideo(true);
+      setIsLocalVideoOn(true);
       setIsCamOpening(false);
     }
   };
@@ -100,9 +100,9 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
     toggleCam,
     clearRemoteUser,
     remoteUser,
-    displayVideo,
+    isLocalVideoOn,
     isCamOpening,
-    remoteVideo,
+    isRemoteVideOn,
   };
 };
 
