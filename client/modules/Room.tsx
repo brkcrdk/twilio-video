@@ -53,6 +53,14 @@ function Room() {
         onClick={() => {
           // disconnect olunduğu zaman kamera da stop edilmeli
           // ilk kamera durdurulup ondan sonra disconnect edilmeli, belki??
+          // Canlıda test ettikten sonra bu durumu tekrar test edeceğim gerekliliğini o zaman daha iyi
+          // anlayabilirim
+
+          // room?.localParticipant.videoTracks.forEach(publication => {
+          //   publication.unpublish();
+          //   publication.track.stop();
+          // });
+
           room?.disconnect();
           dispatch({
             type: 'DISCONNECT',
