@@ -5,7 +5,7 @@ import { useRoom } from 'store';
 import { Room, Disconnected, Preview } from 'modules';
 
 import { videoContraints } from 'videoConstants';
-import styles from '../styles/Home.module.css';
+import styles from 'styles/Home.module.css';
 
 const Home: NextPage = () => {
   const [camOn, setCamOn] = useState(true);
@@ -17,7 +17,7 @@ const Home: NextPage = () => {
 
   const joinRoom = async () => {
     setConnecting(true);
-    const roomName = 'dissconnection-test12323';
+    const roomName = 'testing-room';
     const request = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       headers: {
