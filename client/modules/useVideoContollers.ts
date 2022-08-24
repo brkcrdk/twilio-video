@@ -22,10 +22,10 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
   useEffect(() => {
     if (room?.localParticipant) {
       const { localParticipant } = room;
-      localParticipant.videoTracks.forEach(val => {
-        setDisplayVideo(val.isTrackEnabled);
+      localParticipant.videoTracks.forEach(track => {
+        setDisplayVideo(track.isTrackEnabled);
         if (localRef?.current) {
-          val.track.attach(localRef?.current);
+          track.track.attach(localRef?.current);
         }
       });
     }

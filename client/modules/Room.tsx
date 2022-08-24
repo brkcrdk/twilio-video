@@ -5,6 +5,7 @@ import useLeavingRoom from './useLeavingRoom';
 import Video from './Video';
 import styles from 'styles/Home.module.css';
 import useVideoControllers from './useVideoContollers';
+import useAudioControllers from './useAudioControllers';
 
 function Room() {
   const {
@@ -27,6 +28,9 @@ function Room() {
     remoteRef,
   });
 
+  const { toggleAudio, isLocalAudioOn, isRemoteAudioOn } =
+    useAudioControllers();
+
   useLeavingRoom(clearRemoteUser);
 
   return (
@@ -37,6 +41,7 @@ function Room() {
             ref={localRef}
             participant={room?.localParticipant}
             hasVideo={displayVideo}
+            hasAudio={isLocalAudioOn}
             isLoading={isCamOpening}
             isLocal
           />
@@ -46,6 +51,7 @@ function Room() {
             ref={remoteRef}
             participant={remoteUser}
             hasVideo={remoteVideo}
+            hasAudio={isRemoteAudioOn}
           />
         )}
       </div>
@@ -70,6 +76,7 @@ function Room() {
         Ayrıl
       </button>
       <button onClick={toggleCam}>Kamera Aç/Kapa</button>
+      <button onClick={toggleAudio}>Mikrofon Aç/Kapa</button>
     </div>
   );
 }

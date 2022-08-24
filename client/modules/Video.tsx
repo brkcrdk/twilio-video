@@ -5,12 +5,16 @@ import styles from 'styles/Home.module.css';
 interface VideoProps {
   participant: Participant;
   hasVideo?: boolean;
+  hasAudio?: boolean;
   isLoading?: boolean;
   isLocal?: boolean;
 }
 
 const Video = forwardRef<HTMLVideoElement, VideoProps>(
-  ({ participant, hasVideo = true, isLoading, isLocal }, ref) => {
+  (
+    { participant, hasVideo = true, isLoading, isLocal, hasAudio = true },
+    ref
+  ) => {
     return (
       <div className={styles.videoContainer}>
         <video
@@ -31,6 +35,7 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(
           <span>Participant ID:{participant.identity}</span>
           <span>Statu: {isLocal ? 'Local' : 'Remote'}</span>
           <span>Kamera:{hasVideo ? 'Açık' : 'Kapalı'}</span>
+          <span>Mikrofon:{hasAudio ? 'Açık' : 'Kapalı'}</span>
         </div>
       </div>
     );
