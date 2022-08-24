@@ -1,11 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
-import { Participant, createLocalVideoTrack, RemoteTrack } from 'twilio-video';
+import { useRef } from 'react';
 
 import { useRoom } from 'store';
-import { videoContraints } from 'videoConstants';
 import useLeavingRoom from './useLeavingRoom';
 import Video from './Video';
 import styles from 'styles/Home.module.css';
+import useVideoControllers from './useVideoContollers';
 
 function Room() {
   const {
@@ -16,74 +15,19 @@ function Room() {
   const localRef = useRef(null);
   const remoteRef = useRef(null);
 
-  const [displayVideo, setDisplayVideo] = useState(false);
-  const [remoteVideo, setRemoteVideo] = useState(false);
-  const [remoteUser, setRemoteUser] = useState<Participant | null>(null);
-  const [isCamOpening, setIsCamOpening] = useState(false);
+  const {
+    toggleCam,
+    clearRemoteUser,
+    remoteUser,
+    displayVideo,
+    isCamOpening,
+    remoteVideo,
+  } = useVideoControllers({
+    localRef,
+    remoteRef,
+  });
 
-  useLeavingRoom(() => setRemoteUser(null));
-
-  useEffect(() => {
-    if (room?.localParticipant) {
-      const { localParticipant } = room;
-      localParticipant.videoTracks.forEach(val => {
-        setDisplayVideo(val.isTrackEnabled);
-        if (localRef?.current) {
-          val.track.attach(localRef?.current);
-        }
-      });
-    }
-  }, [room]);
-
-  useEffect(() => {
-    const handleTrackSubscribed = (participant: Participant) => {
-      setRemoteUser(participant);
-
-      participant.on('trackSubscribed', track => {
-        setRemoteVideo(track.isEnabled);
-        if (remoteRef?.current && track.kind !== 'data') {
-          track.attach(remoteRef.current);
-        }
-      });
-    };
-
-    if (room) {
-      room.on('participantConnected', handleTrackSubscribed);
-      room.participants.forEach(handleTrackSubscribed);
-    }
-  }, [room]);
-
-  useEffect(() => {
-    room?.participants.forEach(participant => {
-      participant.videoTracks.forEach(publication => {
-        publication.on('unsubscribed', () => setRemoteVideo(false));
-        publication.on('subscribed', () => setRemoteVideo(true));
-      });
-    });
-  }, [room]);
-
-  const toggleCam = async () => {
-    if (displayVideo) {
-      room?.localParticipant.videoTracks.forEach(publication => {
-        publication.unpublish();
-        publication.track.disable();
-        publication.track.stop();
-        setDisplayVideo(false);
-      });
-    } else {
-      setIsCamOpening(true);
-      const localTrack = await createLocalVideoTrack(videoContraints);
-      room?.localParticipant.publishTrack(localTrack);
-      room?.localParticipant.videoTracks.forEach(publication => {
-        publication.track.enable();
-      });
-      if (localRef.current) {
-        localTrack.attach(localRef.current);
-      }
-      setDisplayVideo(true);
-      setIsCamOpening(false);
-    }
-  };
+  useLeavingRoom(clearRemoteUser);
 
   return (
     <div className={styles.roomContainer}>
