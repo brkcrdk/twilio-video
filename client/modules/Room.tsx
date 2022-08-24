@@ -63,7 +63,6 @@ function Room() {
       </button>
       <button onClick={toggleCam}>
         Kamera Aç/Kapa {JSON.stringify(displayVideo)}
-        remote Video {JSON.stringify(remoteVideo)}
       </button>
     </div>
   );

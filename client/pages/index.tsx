@@ -31,7 +31,7 @@ const Home: NextPage = () => {
 
     const room = await connect(String(token), {
       name: String(roomName),
-      video: videoContraints,
+      video: camOn ? videoContraints : false,
       audio: false,
     });
 
