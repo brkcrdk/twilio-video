@@ -30,7 +30,10 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(
             {isLoading ? 'Kamera Açılıyor' : 'Kamera yok'}
           </div>
         )}
-        {/* <span>{participant.identity}</span> */}
+        <div className={styles.videoInfo}>
+          <span>Participant ID:{participant.identity}</span>
+          <span>Kamera:{hasVideo ? 'Açık' : 'Kapalı'}</span>
+        </div>
       </div>
     );
   }

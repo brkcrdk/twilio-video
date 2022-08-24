@@ -31,6 +31,7 @@
   height: 100%;
   overflow: hidden;
   border: 1px solid;
+  position: relative;
 }
 
 .videoElement{
@@ -46,4 +47,11 @@
   height: 100%;
   border: 1px solid yellow;
   background: rgba(255,255,0,0.2);
+}
+
+.videoInfo{
+  display: grid;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
 }
