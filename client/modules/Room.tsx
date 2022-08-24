@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 
+import styles from 'styles/Home.module.css';
 import { useRoom } from 'store';
 import useLeavingRoom from './useLeavingRoom';
 import Video from './Video';
-import styles from 'styles/Home.module.css';
 import useVideoControllers from './useVideoContollers';
 import useAudioControllers from './useAudioControllers';
 

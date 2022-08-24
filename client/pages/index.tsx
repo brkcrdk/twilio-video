@@ -8,14 +8,14 @@ import { videoContraints } from 'videoConstants';
 import styles from 'styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const [camOn, setCamOn] = useState(true);
-  const [audioOn, setAudioOn] = useState(true);
-
-  const [connecting, setConnecting] = useState(false);
   const {
     state: { room, disconnected },
     dispatch,
   } = useRoom();
+
+  const [camOn, setCamOn] = useState(true);
+  const [audioOn, setAudioOn] = useState(true);
+  const [connecting, setConnecting] = useState(false);
 
   const joinRoom = async () => {
     setConnecting(true);
