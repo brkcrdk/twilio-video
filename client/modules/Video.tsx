@@ -9,7 +9,7 @@ interface VideoProps {
 }
 
 const Video = forwardRef<HTMLVideoElement, VideoProps>(
-  ({ participant, hasVideo, isLoading }, ref) => {
+  ({ participant, hasVideo = true, isLoading }, ref) => {
     return (
       <div className={styles.videoContainer}>
         <video
