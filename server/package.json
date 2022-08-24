@@ -1,5 +1,5 @@
 {
-  "name": "servertest",
+  "name": "server",
   "version": "1.0.0",
   "description": "Twilio server kurulumu",
   "main": "index.js",

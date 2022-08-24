@@ -1,6 +1,9 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "description": "Twilio client kurulumu",
+  "author": "Burak Çardak",
+  "license": "ISC",
   "private": true,
   "scripts": {
     "dev": "next dev",
