@@ -7,7 +7,7 @@ import Video from './Video';
 import useVideoControllers from './useVideoContollers';
 import useAudioControllers from './useAudioControllers';
 import VideoDevices from './VideoDevices';
-
+import AudioDevices from './AudioDevices';
 function Room() {
   const {
     state: { room },
@@ -79,6 +79,7 @@ function Room() {
       <button onClick={toggleCam}>Kamera Aç/Kapa</button>
       <button onClick={toggleAudio}>Mikrofon Aç/Kapa</button>
       <VideoDevices />
+      <AudioDevices />
     </div>
   );
 }

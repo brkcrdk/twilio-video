@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 function VideoDevices() {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
