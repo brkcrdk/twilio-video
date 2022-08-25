@@ -6,6 +6,7 @@ import useLeavingRoom from './useLeavingRoom';
 import Video from './Video';
 import useVideoControllers from './useVideoContollers';
 import useAudioControllers from './useAudioControllers';
+import VideoDevices from './VideoDevices';
 
 function Room() {
   const {
@@ -77,6 +78,7 @@ function Room() {
       </button>
       <button onClick={toggleCam}>Kamera Aç/Kapa</button>
       <button onClick={toggleAudio}>Mikrofon Aç/Kapa</button>
+      <VideoDevices />
     </div>
   );
 }
