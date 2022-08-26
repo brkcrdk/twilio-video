@@ -4,7 +4,25 @@ import { useRoom } from 'store';
 const useLeavingRoom = (leavingEvent: () => void) => {
   const {
     state: { room },
+    dispatch,
   } = useRoom();
+
+  const handleDisconnect = () => {
+    // disconnect olunduğu zaman kamera da stop edilmeli
+    // ilk kamera durdurulup ondan sonra disconnect edilmeli, belki??
+    // Canlıda test ettikten sonra bu durumu tekrar test edeceğim gerekliliğini o zaman daha iyi
+    // anlayabilirim
+
+    // room?.localParticipant.videoTracks.forEach(publication => {
+    //   publication.unpublish();
+    //   publication.track.stop();
+    // });
+
+    room?.disconnect();
+    return dispatch({
+      type: 'DISCONNECT',
+    });
+  };
 
   useEffect(() => {
     if (room) {
@@ -41,6 +59,8 @@ const useLeavingRoom = (leavingEvent: () => void) => {
       window.removeEventListener('beforeunload', () => room?.disconnect());
     };
   }, [leavingEvent]);
+
+  return { handleDisconnect };
 };
 
 export default useLeavingRoom;
