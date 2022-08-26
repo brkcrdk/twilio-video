@@ -21,40 +21,51 @@ function Preview({
   audioStatus,
 }: PreviewProps) {
   const [isGettingCam, setIsGettingCam] = useState(true);
-  // const [camOn, setCamOn] = useState(true);
+  const [hasPermission, setHasPermission] = useState(true);
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const getMediaDevices = async () => {
       if (isSupported) {
-        /**
-         * NOTE: Eğer twilio-videonun sunduğu createLocalVideo function'ı ile görüntülü oluşturursak
-         * Route değiştiği zaman bile bu kamera açık kalıyordu. Bu durumda createLocalVideo'nun oluşturduğu
-         * görüntüyü unmount sırasında destroy etmek de pek sağlıklı çalışmıyor. Bu nedenle preview esnasında
-         * görüntüyü navite bir şekilde gösteriyoruz.
-         */
-        const localTrackPreview = await navigator.mediaDevices.getUserMedia({
-          video: videoContraints,
-          audio: false,
-        });
+        try {
+          /**
+           * NOTE: Eğer twilio-videonun sunduğu createLocalVideo function'ı ile görüntülü oluşturursak
+           * Route değiştiği zaman bile bu kamera açık kalıyordu. Bu durumda createLocalVideo'nun oluşturduğu
+           * görüntüyü unmount sırasında destroy etmek de pek sağlıklı çalışmıyor. Bu nedenle preview esnasında
+           * görüntüyü navite bir şekilde gösteriyoruz.
+           */
+          const localTrackPreview = await navigator.mediaDevices.getUserMedia({
+            video: videoContraints,
+            audio: false,
+          });
 
-        if (videoRef?.current) {
-          // Preview kamerasını aç/kapa
-          if (camStatus) {
-            videoRef.current.srcObject = localTrackPreview;
-          } else {
-            videoRef.current.srcObject = null;
+          if (videoRef?.current) {
+            // Preview kamerasını aç/kapa
+            if (camStatus) {
+              videoRef.current.srcObject = localTrackPreview;
+            } else {
+              videoRef.current.srcObject = null;
+            }
           }
-        }
 
-        setIsGettingCam(false);
+          setIsGettingCam(false);
+        } catch (error) {
+          setHasPermission(false);
+        }
       } else {
         alert('no support of navigator media devices ');
       }
     };
     getMediaDevices();
   }, [camStatus]);
+
+  if (!hasPermission)
+    return (
+      <div>
+        Devam edebilmek için kamera ve mikrofon kullanımı izni tanımlamalısınız!
+      </div>
+    );
 
   return (
     <div className={styles.previewContainer}>
