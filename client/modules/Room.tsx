@@ -8,6 +8,8 @@ import useVideoControllers from './useVideoContollers';
 import useAudioControllers from './useAudioControllers';
 import VideoDevices from './VideoDevices';
 import AudioDevices from './AudioDevices';
+import useRemoteActions from './useRemoteActions';
+
 function Room() {
   const {
     state: { room },
@@ -34,6 +36,8 @@ function Room() {
 
   useLeavingRoom(clearRemoteUser);
 
+  const { handleKickRemoteParticipant } = useRemoteActions();
+
   return (
     <div className={styles.roomContainer}>
       <div className={styles.videosContainer}>
@@ -53,6 +57,7 @@ function Room() {
             participant={remoteUser}
             hasVideo={isRemoteVideOn}
             hasAudio={isRemoteAudioOn}
+            onKickRemoteParticipant={handleKickRemoteParticipant}
           />
         )}
       </div>
