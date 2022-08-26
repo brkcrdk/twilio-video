@@ -42,12 +42,13 @@ const useRemoteActions = ({ onMute, onKick }: RemoteActionProps) => {
        */
       participant.on('trackSubscribed', (track: Track) => {
         if (track.kind === 'data') {
-          track.on('message', (message: string) => {
-            const { type }: { type: ActionTypes } = JSON.parse(message);
-
-            switch (type) {
+          track.on('message', (message: ActionTypes) => {
+            switch (message) {
               case ActionTypes.KICK_USER: {
                 return onKick();
+              }
+              case ActionTypes.MUTE_USER: {
+                return onMute();
               }
             }
           });
@@ -61,15 +62,15 @@ const useRemoteActions = ({ onMute, onKick }: RemoteActionProps) => {
     }
   }, [room]);
 
-  const handleKickRemoteParticipant = async () => {
-    dataTrack?.send(
-      JSON.stringify({
-        type: ActionTypes.KICK_USER,
-      })
-    );
+  const handleKickRemoteParticipant = () => {
+    dataTrack?.send(ActionTypes.KICK_USER);
   };
 
-  return { handleKickRemoteParticipant };
+  const handleMuteRemoteParticipant = () => {
+    dataTrack?.send(ActionTypes.MUTE_USER);
+  };
+
+  return { handleKickRemoteParticipant, handleMuteRemoteParticipant };
 };
 
 export default useRemoteActions;
