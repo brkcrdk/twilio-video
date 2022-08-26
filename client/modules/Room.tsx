@@ -30,15 +30,16 @@ function Room() {
     remoteRef,
   });
 
-  const { toggleAudio, isLocalAudioOn, isRemoteAudioOn } =
+  const { toggleAudio, isLocalAudioOn, isRemoteAudioOn, closeAudio } =
     useAudioControllers();
 
   const { handleDisconnect } = useLeavingRoom(clearRemoteUser);
 
-  const { handleKickRemoteParticipant } = useRemoteActions({
-    onKick: () => console.log('onkick'),
-    onMute: () => console.log('onMute'),
-  });
+  const { handleKickRemoteParticipant, handleMuteRemoteParticipant } =
+    useRemoteActions({
+      onKick: handleDisconnect,
+      onMute: closeAudio,
+    });
 
   return (
     <div className={styles.roomContainer}>
@@ -60,6 +61,7 @@ function Room() {
             hasVideo={isRemoteVideOn}
             hasAudio={isRemoteAudioOn}
             onKickRemoteParticipant={handleKickRemoteParticipant}
+            onMuteRemoteParticipant={handleMuteRemoteParticipant}
           />
         )}
       </div>
