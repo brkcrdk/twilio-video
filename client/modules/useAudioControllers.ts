@@ -40,25 +40,39 @@ const useAudioControllers = () => {
     room?.participants.forEach(handleRemoteAudio);
   }, [room]);
 
+  const closeAudio = async () => {
+    room?.localParticipant.audioTracks.forEach(publication => {
+      publication.unpublish();
+      publication.track.disable();
+      publication.track.stop();
+      setIsLocalAudioOn(false);
+    });
+  };
+
+  const openAudio = async () => {
+    const localTrack = await createLocalAudioTrack();
+    room?.localParticipant.publishTrack(localTrack);
+    room?.localParticipant.audioTracks.forEach(publication => {
+      publication.track.enable();
+    });
+    setIsLocalAudioOn(true);
+  };
+
   const toggleAudio = async () => {
     if (isLocalAudioOn) {
-      room?.localParticipant.audioTracks.forEach(publication => {
-        publication.unpublish();
-        publication.track.disable();
-        publication.track.stop();
-        setIsLocalAudioOn(false);
-      });
+      await closeAudio();
     } else {
-      const localTrack = await createLocalAudioTrack();
-      room?.localParticipant.publishTrack(localTrack);
-      room?.localParticipant.audioTracks.forEach(publication => {
-        publication.track.enable();
-      });
-      setIsLocalAudioOn(true);
+      await openAudio();
     }
   };
 
-  return { toggleAudio, isLocalAudioOn, isRemoteAudioOn };
+  return {
+    toggleAudio,
+    closeAudio,
+    openAudio,
+    isLocalAudioOn,
+    isRemoteAudioOn,
+  };
 };
 
 export default useAudioControllers;
