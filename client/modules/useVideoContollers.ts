@@ -58,9 +58,16 @@ const useVideoControllers = ({ localRef, remoteRef }: Props) => {
       setRemoteUser(participant);
 
       participant.on('trackSubscribed', track => {
-        setIsRemoteVideoOn(track.isEnabled);
+        // Bu şekilde gelen trackin tipi data değilse
+        // hem sesi hem de videoyu aynı elementin içine yerleştiriyoruz
+        // böylece hem ses hem video için ayrı elementler eklememiz gerekmiyor
         if (remoteRef?.current && track.kind !== 'data') {
           track.attach(remoteRef.current);
+        }
+        // Track.kind audio da olabileceği için bu event ses için çalıştığında
+        // video statenini güncellemememeli. Bunu da bu şekilde yönetebiliyoruz.
+        if (track.kind === 'video') {
+          setIsRemoteVideoOn(track.isEnabled);
         }
       });
     };
