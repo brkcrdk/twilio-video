@@ -13,7 +13,6 @@ import useRemoteActions from './useRemoteActions';
 function Room() {
   const {
     state: { room },
-    dispatch,
   } = useRoom();
 
   const localRef = useRef(null);
@@ -34,9 +33,12 @@ function Room() {
   const { toggleAudio, isLocalAudioOn, isRemoteAudioOn } =
     useAudioControllers();
 
-  useLeavingRoom(clearRemoteUser);
+  const { handleDisconnect } = useLeavingRoom(clearRemoteUser);
 
-  const { handleKickRemoteParticipant } = useRemoteActions();
+  const { handleKickRemoteParticipant } = useRemoteActions({
+    onKick: () => console.log('onkick'),
+    onMute: () => console.log('onMute'),
+  });
 
   return (
     <div className={styles.roomContainer}>
@@ -61,26 +63,7 @@ function Room() {
           />
         )}
       </div>
-      <button
-        onClick={() => {
-          // disconnect olunduğu zaman kamera da stop edilmeli
-          // ilk kamera durdurulup ondan sonra disconnect edilmeli, belki??
-          // Canlıda test ettikten sonra bu durumu tekrar test edeceğim gerekliliğini o zaman daha iyi
-          // anlayabilirim
-
-          // room?.localParticipant.videoTracks.forEach(publication => {
-          //   publication.unpublish();
-          //   publication.track.stop();
-          // });
-
-          room?.disconnect();
-          dispatch({
-            type: 'DISCONNECT',
-          });
-        }}
-      >
-        Ayrıl
-      </button>
+      <button onClick={handleDisconnect}>Ayrıl</button>
       <button onClick={toggleCam}>Kamera Aç/Kapa</button>
       <button onClick={toggleAudio}>Mikrofon Aç/Kapa</button>
       <VideoDevices />
