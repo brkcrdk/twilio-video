@@ -8,11 +8,21 @@ interface VideoProps {
   hasAudio?: boolean;
   isLoading?: boolean;
   isLocal?: boolean;
+  onKickRemoteParticipant?: (participant: Participant) => void;
+  onMuteRemoteParticipant?: (participant: Participant) => void;
 }
 
 const Video = forwardRef<HTMLVideoElement, VideoProps>(
   (
-    { participant, hasVideo = true, isLoading, isLocal, hasAudio = true },
+    {
+      participant,
+      hasVideo = true,
+      hasAudio = true,
+      isLoading,
+      isLocal,
+      onKickRemoteParticipant,
+      onMuteRemoteParticipant,
+    },
     ref
   ) => {
     return (
@@ -36,6 +46,28 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(
           <span>Statu: {isLocal ? 'Local' : 'Remote'}</span>
           <span>Kamera:{hasVideo ? 'Açık' : 'Kapalı'}</span>
           <span>Mikrofon:{hasAudio ? 'Açık' : 'Kapalı'}</span>
+          {!isLocal && (
+            <div>
+              <button
+                onClick={() => {
+                  if (onMuteRemoteParticipant) {
+                    onMuteRemoteParticipant(participant);
+                  }
+                }}
+              >
+                Mute
+              </button>
+              <button
+                onClick={() => {
+                  if (onKickRemoteParticipant) {
+                    onKickRemoteParticipant(participant);
+                  }
+                }}
+              >
+                Odadan Çıkar
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
